@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ja"><head><meta charset="utf-8"/><meta content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover" name="viewport"/><title>MONSTER EXPLORE | 探索・アリーナ 0.5</title><meta name="theme-color" content="#101827"/>
+<html lang="ja"><head><meta charset="utf-8"/><meta content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover" name="viewport"/><title>MONSTER EXPLORE | 探索・アリーナ 0.6</title><meta name="theme-color" content="#101827"/>
 <link rel="manifest" href="./manifest.webmanifest"/>
 <link rel="apple-touch-icon" sizes="180x180" href="./icons/icon-180.png"/>
 <link rel="icon" type="image/png" sizes="192x192" href="./icons/icon-192.png"/>
@@ -2944,7 +2944,7 @@ function prepare(){
  if(enemy==null)throw new Error('次の対戦相手が確定していません');
  document.getElementById('selectB').value=String(enemy);
  // Ordinary fields for practice; the colosseum remains reserved for the arena final.
- chosenArena=isFinalRound()?1:[0,2,3,4][Math.floor(Math.random()*4)];chooseArena(chosenArena);change();
+ chosenArena=practice?.wild?4:isFinalRound()?1:[0,2,3,4][Math.floor(Math.random()*4)];chooseArena(chosenArena);change();
  // reset() creates fresh fighters and SP for every match; restore only the player's previous HP.
  // First match starts full. Never round upward or heal between rounds, including level-up.
  if(isMaster()&&!practice&&round>0){
@@ -3229,13 +3229,13 @@ resize();resetActors();requestAnimationFrame(draw);
 body.battle-layout-active #music61Hint{display:none}
 @media (orientation:landscape) and (max-height:500px){#music61Hint{top:36px;padding:5px 12px;font-size:11px}}
 </style><button id="music61Hint" type="button">♪ タップで音楽を再生</button>
-<script src="app/v05/music.js"></script>
+<script src="app/v06/music.js"></script>
 <script id="music60-js">(()=>{
 'use strict';
 // MONSTER ARENA 6.7: original 64-bar, sectionally composed adaptive score.
 const titleNames={home:'タイトル',select:'モンスター選択',opening:'トーナメント開幕',round:'通常バトル',danger:'通常バトル・ピンチ',ko:'決着',advance:'1回戦突破',finalBracket:'決勝進出',final:'決勝戦',finalDanger:'決勝・ピンチ',finalKo:'決勝決着',victory:'WIN',finalVictory:'決勝WIN',champion:'優勝',championScreen:'優勝VICTORY',lost:'LOSE'};
 let phase='home',context=null,bus=null,limiter=null,enabled=true,transport=null,nextBeat=0,step=0,track='',endHold=0,intensity=0;
-const externalPhases=new Set(['home','select','round','danger','final','finalDanger','victory','champion','championScreen']);
+const externalPhases=new Set(['home','select','final','finalDanger','victory','champion','championScreen']);
 const exploreLoop=window.ExploreLoopMusic.create({getContext:()=>context,getDestination:()=>limiter,onChange:()=>{if(bus&&context)bus.gain.setTargetAtTime(synthVolume(),context.currentTime,.025);updateToggle()}});
 function synthVolume(){
   if(!enabled||document.hidden||exploreLoop.wants())return 0; // Exploration audio owns the music bus.
@@ -3504,7 +3504,7 @@ const reloadFresh=()=>{
 const add=(parent,id)=>{if(!parent)return;const b=document.createElement('button');b.type='button';b.id=id;b.textContent='最新版を再読み込み';b.title='育成記録を残したまま最新版を再読み込みします';b.addEventListener('click',reloadFresh);parent.appendChild(b)};
 add(document.getElementById('home57Bottom'),'ma730TitleRefresh');
 add(document.querySelector('#launchInner h2'),'ma730MenuRefresh');
-const build=document.createElement('span');build.id='ma730Build';build.textContent='EXPLORE 0.5';document.getElementById('arenaViewport')?.appendChild(build);
+const build=document.createElement('span');build.id='ma730Build';build.textContent='EXPLORE 0.6';document.getElementById('arenaViewport')?.appendChild(build);
 if(!('serviceWorker' in navigator)||!window.isSecureContext)return;
 let registration=null,lastCheck=0;
 const check=()=>{if(!registration||Date.now()-lastCheck<15000)return;lastCheck=Date.now();registration.update().catch(()=>{});};
@@ -4079,7 +4079,7 @@ launch.addEventListener("pointerdown",preloadAll,{once:true});
 
 </script>
 
-<link rel="stylesheet" href="app/v05/explore.css">
-<script src="app/v05/explore.js"></script>
-<script src="app/v05/facilities.js"></script>
+<link rel="stylesheet" href="app/v06/explore.css">
+<script src="app/v06/explore.js"></script>
+<script src="app/v06/facilities.js"></script>
 </body></html>
