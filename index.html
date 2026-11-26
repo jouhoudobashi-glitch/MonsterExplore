@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ja"><head><meta charset="utf-8"/><meta content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover" name="viewport"/><title>MONSTER EXPLORE | 探索・アリーナ 0.4</title><meta name="theme-color" content="#101827"/>
+<html lang="ja"><head><meta charset="utf-8"/><meta content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover" name="viewport"/><title>MONSTER EXPLORE | 探索・アリーナ 0.5</title><meta name="theme-color" content="#101827"/>
 <link rel="manifest" href="./manifest.webmanifest"/>
 <link rel="apple-touch-icon" sizes="180x180" href="./icons/icon-180.png"/>
 <link rel="icon" type="image/png" sizes="192x192" href="./icons/icon-192.png"/>
@@ -3132,7 +3132,7 @@ window.__arenaModes?.setMode(window.__arenaModes.mode);
 (()=>{
 const arena=document.getElementById('arenaViewport');
 const overlay=document.createElement('div');overlay.id='manualControls';
-overlay.innerHTML=`<div id="manualTop"><button id="autoToggle">移動：手動</button><button id="manualPause">Ⅱ 停止</button><button id="manualSupport">補助技 5</button></div><div id="manualPad"><div id="padKnob"></div></div><div id="skillPad"></div><div id="manualHelp">方向キー / WASD・技 1〜4・補助 5</div>`;
+overlay.innerHTML=`<div id="manualTop"><button id="autoToggle">移動：手動</button><button id="manualPause">Ⅱ 停止</button><button id="manualSupport" type="button"><span class="support05Label">補助技</span><strong class="support05Name">―</strong><small class="support05Status"></small><i class="support05Meter" aria-hidden="true"></i></button></div><div id="manualPad"><div id="padKnob"></div></div><div id="skillPad"></div><div id="manualHelp">方向キー / WASD・技 1〜4・補助 5</div>`;
 arena.appendChild(overlay);arena.classList.add('manual-ready');
 const outside=document.createElement('div');outside.id='manualOutside';outside.innerHTML='<button id="outsideAuto">移動：手動</button><button id="outsideHint">操作：方向キー／WASD ＋ 技1〜4</button>';
 arena.after(outside);
@@ -3153,6 +3153,13 @@ const skillPad=document.getElementById('skillPad');
 for(let i=0;i<5;i++){const b=document.createElement('button');b.className='skillKey';b.type='button';b.innerHTML='<div class="coolMask"></div><span class="skillText"><span class="moveName718"></span><span class="movePower718"></span></span>';b.onclick=()=>manualSkill(i);skillPad.appendChild(b)}window.__arenaSpecial?.mountHud();
 function sync(){const f=game?.fighters?.[0];const active=!!(game&&game.active&&!game.ended);arena.classList.toggle('manual-ready',active&&!manualInput.fullAI);arena.classList.toggle('ai-watch-mode',active&&manualInput.fullAI);
  if(f){[...skillPad.children].forEach((b,i)=>{const sk=skills[f.m.skills[i]];if(!sk)return;const cd=Math.max(0,f.cd[i]);const nameEl=b.querySelector('.moveName718'),powerEl=b.querySelector('.movePower718');if(nameEl.textContent!==sk.name)nameEl.textContent=sk.name;const power=sk.support?'':String(sk.power);if(powerEl.textContent!==power)powerEl.textContent=power;b.setAttribute('aria-label',`${sk.name} 威力${sk.power} ${cd>0?`残り${cd.toFixed(1)}秒`:'使用可'}`);b.querySelector('.coolMask').style.transform=`scaleY(${Math.min(1,cd/Math.max(.1,sk.cd))})`;b.disabled=cd>.01||!active||game.paused;b.classList.toggle('skill-cooling',cd>.01);b.classList.toggle('skill-queued',manualInput.queued===i);b.classList.toggle('skill-ready',cd<=.01&&active&&!game.paused);});}
+ const sup=document.getElementById('manualSupport'),sk=f&&skills[f.m.skills[4]];
+ if(sk?.support){const cd=Math.max(0,f.cd[4]||0),usable=active&&!game.paused&&cd<=.01;
+  const nameEl=sup.querySelector('.support05Name'),statusEl=sup.querySelector('.support05Status');
+  if(nameEl.textContent!==sk.name)nameEl.textContent=sk.name;
+  const status=cd>.01?`あと${cd.toFixed(1)}秒`:usable?'使用可能':'待機中';if(statusEl.textContent!==status)statusEl.textContent=status;
+  sup.disabled=!usable;sup.dataset.kind=sk.support;sup.classList.toggle('support05Cooling',cd>.01);sup.querySelector('.support05Meter').style.width=`${100*Math.max(0,1-cd/Math.max(.1,sk.cd))}%`;sup.setAttribute('aria-label',`${sk.name}（補助技） ${status}`);
+ }else{sup.disabled=true;sup.querySelector('.support05Name').textContent='―';sup.querySelector('.support05Status').textContent='待機中';}
  document.getElementById('manualPause').textContent=game?.paused?'▶ 再開':'Ⅱ 停止';window.__arenaSpecial?.syncHud();requestAnimationFrame(sync)}
 requestAnimationFrame(sync);
 })();
@@ -3222,14 +3229,16 @@ resize();resetActors();requestAnimationFrame(draw);
 body.battle-layout-active #music61Hint{display:none}
 @media (orientation:landscape) and (max-height:500px){#music61Hint{top:36px;padding:5px 12px;font-size:11px}}
 </style><button id="music61Hint" type="button">♪ タップで音楽を再生</button>
+<script src="app/v05/music.js"></script>
 <script id="music60-js">(()=>{
 'use strict';
 // MONSTER ARENA 6.7: original 64-bar, sectionally composed adaptive score.
 const titleNames={home:'タイトル',select:'モンスター選択',opening:'トーナメント開幕',round:'通常バトル',danger:'通常バトル・ピンチ',ko:'決着',advance:'1回戦突破',finalBracket:'決勝進出',final:'決勝戦',finalDanger:'決勝・ピンチ',finalKo:'決勝決着',victory:'WIN',finalVictory:'決勝WIN',champion:'優勝',championScreen:'優勝VICTORY',lost:'LOSE'};
-let phase='home',context=null,bus=null,enabled=true,transport=null,nextBeat=0,step=0,track='',endHold=0,intensity=0;
+let phase='home',context=null,bus=null,limiter=null,enabled=true,transport=null,nextBeat=0,step=0,track='',endHold=0,intensity=0;
 const externalPhases=new Set(['home','select','round','danger','final','finalDanger','victory','champion','championScreen']);
+const exploreLoop=window.ExploreLoopMusic.create({getContext:()=>context,getDestination:()=>limiter,onChange:()=>{if(bus&&context)bus.gain.setTargetAtTime(synthVolume(),context.currentTime,.025);updateToggle()}});
 function synthVolume(){
-  if(!enabled)return 0; // Prototype uses existing procedural music only.
+  if(!enabled||document.hidden||exploreLoop.wants())return 0; // Exploration audio owns the music bus.
   return ['opening','advance','finalBracket'].includes(phase)?.48:.28;
 }
 
@@ -3250,7 +3259,7 @@ const themes={
 };
 const scores={home:{bpm:90,family:'calm',bars:32},select:{bpm:105,family:'calm',bars:48},opening:{bpm:112,family:'calm',bars:24},round:{bpm:132,family:'battle',bars:64},danger:{bpm:132,family:'battle',bars:64},ko:{bpm:80,family:'calm',bars:2},advance:{bpm:110,family:'calm',bars:32},finalBracket:{bpm:108,family:'final',bars:32},final:{bpm:145,family:'final',bars:64},finalDanger:{bpm:145,family:'final',bars:64},finalKo:{bpm:80,family:'final',bars:2},victory:{bpm:120,family:'calm',bars:3},finalVictory:{bpm:120,family:'final',bars:3},champion:{bpm:110,family:'calm',bars:32},championScreen:{bpm:110,family:'calm',bars:3},lost:{bpm:80,family:'calm',bars:3}};
 let noise=null,rev=null,send=null,fxBus=null;
-function audio(){if(context)return true;try{const AC=window.AudioContext||window.webkitAudioContext;if(!AC)return false;context=new AC();bus=context.createGain();bus.gain.value=synthVolume();fxBus=context.createGain();fxBus.gain.value=.45;const limiter=context.createDynamicsCompressor();limiter.threshold.value=-17;limiter.knee.value=14;limiter.ratio.value=5;bus.connect(limiter);fxBus.connect(limiter);limiter.connect(context.destination);return true}catch(e){return false}}
+function audio(){if(context)return true;try{const AC=window.AudioContext||window.webkitAudioContext;if(!AC)return false;context=new AC();bus=context.createGain();bus.gain.value=synthVolume();fxBus=context.createGain();fxBus.gain.value=.45;limiter=context.createDynamicsCompressor();limiter.threshold.value=-17;limiter.knee.value=14;limiter.ratio.value=5;bus.connect(limiter);fxBus.connect(limiter);limiter.connect(context.destination);context.addEventListener('statechange',()=>{exploreLoop.sync();updateToggle()});return true}catch(e){return false}}
 function prepare(){if(noise||!context)return;const sr=context.sampleRate;noise=context.createBuffer(1,Math.floor(sr*.42),sr);let data=noise.getChannelData(0);for(let i=0;i<data.length;i++)data[i]=Math.random()*2-1;const impulse=context.createBuffer(2,Math.floor(sr*.8),sr);for(let c=0;c<2;c++){let a=impulse.getChannelData(c);for(let i=0;i<a.length;i++)a[i]=(Math.random()*2-1)*Math.pow(1-i/a.length,2.7)*.22}rev=context.createConvolver();rev.buffer=impulse;send=context.createGain();send.gain.value=.14;rev.connect(send);send.connect(bus)}
 function voice(note,t,d,type,vol){if(!context||context.state!=='running')return;prepare();const f=midi(note);let g=context.createGain(),filter=context.createBiquadFilter();filter.type='lowpass';let attack=.012,release=.16;
 if(type==='strings'){attack=.10;release=.28;filter.frequency.value=1650}else if(type==='brass'){attack=.04;release=.18;filter.frequency.value=1100}else if(type==='piano'){attack=.005;release=.20;filter.frequency.value=3200}else if(type==='pad'){attack=.28;release=.55;filter.frequency.value=900}else if(type==='bass'){attack=.014;release=.13;filter.frequency.value=480}else if(type==='bell'){attack=.005;release=.48;filter.frequency.value=4000}
@@ -3258,8 +3267,8 @@ g.gain.setValueAtTime(.0001,t);g.gain.linearRampToValueAtTime(Math.max(.0001,vol
 const partials=type==='strings'?[[1,.65,-4],[1,.35,4],[2,.12,0]]:type==='brass'?[[1,.7,0],[2,.16,0]]:type==='bell'?[[1,.7,0],[2.01,.2,0],[3.97,.06,0]]:[[1,.85,0],[2,.12,0]];
 for(const [mul,amp,det] of partials){const o=context.createOscillator(),og=context.createGain();o.type=type==='strings'||type==='brass'?'sawtooth':type==='pad'?'triangle':'sine';o.frequency.value=f*mul;o.detune.value=det;og.gain.value=amp;o.connect(og);og.connect(filter);o.start(t);o.stop(t+d+release*5+.2)} }
 function drum(t,kind,vol){if(!context||context.state!=='running')return;prepare();if(kind==='kick'){const o=context.createOscillator(),g=context.createGain();o.frequency.setValueAtTime(135,t);o.frequency.exponentialRampToValueAtTime(48,t+.14);g.gain.setValueAtTime(.0001,t);g.gain.linearRampToValueAtTime(.18*vol,t+.008);g.gain.exponentialRampToValueAtTime(.0001,t+.18);o.connect(g);g.connect(bus);o.start(t);o.stop(t+.2);return}const s=context.createBufferSource(),f=context.createBiquadFilter(),g=context.createGain();s.buffer=noise;f.type=kind==='hat'?'highpass':'bandpass';f.frequency.value=kind==='hat'?6300:1700;g.gain.setValueAtTime(Math.max(.0001,(kind==='hat'?.025:.075)*vol),t);g.gain.exponentialRampToValueAtTime(.0001,t+(kind==='hat'?.055:.13));s.connect(f);f.connect(g);g.connect(bus);s.start(t);s.stop(t+.18)}
-function unlock(){if(!enabled||!audio())return;try{const o=context.createOscillator(),g=context.createGain();g.gain.value=0;o.connect(g);g.connect(context.destination);o.start();o.stop(context.currentTime+.02)}catch(e){}const r=context.resume();if(r&&r.then)r.then(()=>{updateToggle();schedule()}).catch(()=>updateToggle());if(!transport){nextBeat=context.currentTime+.08;transport=setInterval(schedule,75)}updateToggle()}
-function schedule(){if(!enabled||!context||context.state!=='running')return;if(externalPhases.has(phase)){nextBeat=context.currentTime+.15;return;}const s=scores[phase]||scores.home;const family=s.family;const isBattle=family==='battle'||(family==='final'&&['final','finalDanger'].includes(phase));const isJingle=['victory','finalVictory','lost','ko','finalKo'].includes(phase);const unit=60/s.bpm/2;
+function unlock(){if(!enabled||!audio())return;exploreLoop.preload();try{const o=context.createOscillator(),g=context.createGain();g.gain.value=0;o.connect(g);g.connect(context.destination);o.start();o.stop(context.currentTime+.02)}catch(e){}const r=context.resume();if(r&&r.then)r.then(()=>{exploreLoop.sync();updateToggle();schedule()}).catch(()=>updateToggle());if(!transport){nextBeat=context.currentTime+.08;transport=setInterval(schedule,75)}updateToggle()}
+function schedule(){if(!enabled||!context||context.state!=='running')return;if(document.hidden||exploreLoop.wants()||externalPhases.has(phase)){nextBeat=context.currentTime+.15;return;}const s=scores[phase]||scores.home;const family=s.family;const isBattle=family==='battle'||(family==='final'&&['final','finalDanger'].includes(phase));const isJingle=['victory','finalVictory','lost','ko','finalKo'].includes(phase);const unit=60/s.bpm/2;
 if(track!==phase){const old=scores[track];const sameCombat=old&&old.family===s.family&&isBattle;if(!sameCombat){step=0;nextBeat=context.currentTime+.32}track=phase}
 let count=0;while(nextBeat<context.currentTime+.24&&count++<8){const bar=Math.floor(step/8)%s.bars,eighth=step%8,section=Math.floor(bar/8)%4,block=Math.floor(bar/4),root=(progressions[family][bar%32]||48),t=nextBeat,theme=themes[family][(bar+Math.floor(bar/8))%4];let note=root+12+theme[eighth];
 // Sections: introduction, main theme, development, respite, reprise, countermelody, climax, release.
@@ -3277,7 +3286,7 @@ step++;nextBeat+=unit;
 if(isJingle&&step>=s.bars*8){step=s.bars*8;nextBeat=context.currentTime+60} // one-shot: no repeated jingles
 }
 }
-window.__arenaMusicDebug={get phase(){return phase},get audioState(){return context?.state||'uninitialized'},get enabled(){return enabled},setPhase};
+window.__arenaMusicDebug={get phase(){return phase},get audioState(){return context?.state||'uninitialized'},get enabled(){return enabled},get explore(){return exploreLoop.status},setPhase};
 function setPhase(p){if(!scores[p])return;const prior=phase;phase=p;if(bus&&context){bus.gain.cancelScheduledValues(context.currentTime);bus.gain.setTargetAtTime(synthVolume(),context.currentTime,.06)}window.dispatchEvent(new CustomEvent('arena-bgm-phase',{detail:{phase:p}}));const combat=(v)=>['round','danger','final','finalDanger'].includes(v);if(combat(prior)&&combat(p)&&((prior==='round'||prior==='danger')===(p==='round'||p==='danger'))){intensity=(p==='danger'||p==='finalDanger')?1:0;document.getElementById('bgm60Label').textContent=titleNames[p]||p;return;}intensity=(p==='danger'||p==='finalDanger')?1:0;document.getElementById('bgm60Label').textContent=titleNames[p]||p;track='';if(context&&bus){bus.gain.cancelScheduledValues(context.currentTime);bus.gain.setTargetAtTime(0,context.currentTime,.09);setTimeout(()=>{if(bus&&context)bus.gain.setTargetAtTime(synthVolume(),context.currentTime,.14)},300)}}
 function state(){return window.game||null}
 // game is a top-level lexical binding in the original script, so use a separate mirrored DOM observer instead.
@@ -3304,11 +3313,13 @@ window.addEventListener('arena-selection-return',()=>{ended=false;roundIndex=0;s
 // Event callbacks above run before the original overlay handler; defer only the UI inspection.
 window.addEventListener('arena-battle-end',e=>{ko.querySelector('span').textContent=e.detail.playerWon?'勝利！':'負けてしまった…';if(!e.detail.playerWon)ko.classList.add('visible');setTimeout(()=>{ko.classList.remove('visible');overlayState()},1550)});
 const start=document.getElementById('start');if(start)start.addEventListener('click',()=>{unlock();ended=false;if(window.__arenaTourneyDebug?.isPractice)roundIndex=0;setPhase(roundIndex===3?'final':'round')});
-function updateToggle(){const active=enabled&&context&&context.state==='running';toggle.textContent=!enabled?'♫ BGM OFF':active?'♫ BGM 再生中':'♫ 音楽を再生';toggle.setAttribute('aria-pressed',String(!!active));const tip=document.getElementById('music61Hint');if(tip){tip.textContent=!enabled?'BGMはオフです':active?'♪ BGM再生中':'♪ タップで音楽を再生';tip.classList.toggle('playing',!!active)}}
-document.getElementById('music61Hint')?.addEventListener('click',()=>{enabled=true;unlock();updateToggle()});
-toggle.addEventListener('click',()=>{enabled=!enabled;updateToggle();if(enabled){unlock();if(bus&&context)bus.gain.setTargetAtTime(synthVolume(),context.currentTime,.08)}else if(bus&&context)bus.gain.setTargetAtTime(0,context.currentTime,.04)});
-// Start audio only after a deliberate tap (iOS Web Audio requirement).
-document.addEventListener('pointerdown',e=>{if(!context&&enabled&&e.target.closest('button,#home57,#launchScreen,#tourneyOverlay,#arenaViewport'))unlock()},{once:false,passive:true});
+function updateToggle(){const active=enabled&&context&&context.state==='running';const text=!enabled?'♫ BGM OFF':active?'♫ BGM ON':'♫ 音楽ON';for(const b of [toggle,document.getElementById('exMusicToggle')]){if(!b)continue;b.textContent=text;b.setAttribute('aria-pressed',String(!!active));b.setAttribute('aria-label',!enabled?'BGMをオンにする':active?'BGMをオフにする':'BGMを再生する');}const tip=document.getElementById('music61Hint');if(tip){tip.textContent=!enabled?'BGMはオフです':active?'♪ BGM再生中':'♪ タップで音楽を再生';tip.classList.toggle('playing',!!active)}}
+function setEnabled(v){enabled=!!v;exploreLoop.setEnabled(enabled);if(enabled)unlock();if(bus&&context)bus.gain.setTargetAtTime(synthVolume(),context.currentTime,.04);updateToggle()}
+function toggleMusic(){if(enabled&&(!context||context.state!=='running')){unlock();updateToggle();return;}setEnabled(!enabled)}
+document.getElementById('music61Hint')?.addEventListener('click',()=>setEnabled(true));toggle.addEventListener('click',toggleMusic);
+window.__arenaMusicDebug.toggle=toggleMusic;window.__arenaMusicDebug.refresh=updateToggle;
+// Start/resume audio only after a deliberate user gesture, including iOS.
+document.addEventListener('pointerdown',e=>{if(enabled&&(!context||context.state!=='running')&&e.target.closest('button,#home57,#launchScreen,#tourneyOverlay,#arenaViewport')&&!e.target.closest('#bgm60Toggle,#exMusicToggle'))unlock()},{passive:true});
 updateToggle();setPhase('home');checkHp();
 })();</script>
 <script id="startup7222-script">(()=>{
@@ -3493,7 +3504,7 @@ const reloadFresh=()=>{
 const add=(parent,id)=>{if(!parent)return;const b=document.createElement('button');b.type='button';b.id=id;b.textContent='最新版を再読み込み';b.title='育成記録を残したまま最新版を再読み込みします';b.addEventListener('click',reloadFresh);parent.appendChild(b)};
 add(document.getElementById('home57Bottom'),'ma730TitleRefresh');
 add(document.querySelector('#launchInner h2'),'ma730MenuRefresh');
-const build=document.createElement('span');build.id='ma730Build';build.textContent='EXPLORE 0.4';document.getElementById('arenaViewport')?.appendChild(build);
+const build=document.createElement('span');build.id='ma730Build';build.textContent='EXPLORE 0.5';document.getElementById('arenaViewport')?.appendChild(build);
 if(!('serviceWorker' in navigator)||!window.isSecureContext)return;
 let registration=null,lastCheck=0;
 const check=()=>{if(!registration||Date.now()-lastCheck<15000)return;lastCheck=Date.now();registration.update().catch(()=>{});};
@@ -4068,7 +4079,7 @@ launch.addEventListener("pointerdown",preloadAll,{once:true});
 
 </script>
 
-<link rel="stylesheet" href="app/v04/explore.css">
-<script src="app/v04/explore.js"></script>
-<script src="app/v04/facilities.js"></script>
+<link rel="stylesheet" href="app/v05/explore.css">
+<script src="app/v05/explore.js"></script>
+<script src="app/v05/facilities.js"></script>
 </body></html>
