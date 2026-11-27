@@ -1,10 +1,10 @@
 // MONSTER ARENA 7.2.32 - PWA offline shell cache.
-const CACHE = 'monster-explore-0.9-v1';
+const CACHE = 'monster-explore-0.12-v1';
 const PREFIX = 'monster-explore-';
 const VERSION = '7.2.32';
 const isMotion = u => /\/assets\/three_monsters_v32\/[^/]+\.webp$/.test(u.pathname);
 const versionAsset = a => {const u=new URL(a,root);if(isMotion(u))u.searchParams.set('ma_v',VERSION);return u;};
-const ASSETS = ["./audio/win_loop.mp3","./audio/champion_loop.mp3","./audio/explore_v05/adventure_loop.mp3","./audio/explore_v05/encounter_loop.mp3","./assets/explore_v02/forest.webp","./assets/explore_v02/left.png","./assets/explore_v02/right.png","./","./index.html","./manifest.webmanifest","./icons/icon-180.png","./icons/icon-192.png","./icons/icon-512.png","./effects/c_course/stage5r/bug_fx.png","./effects/c_course/stage5r/dragon_fx.png","./effects/c_course/stage5r/electric_fx.png","./effects/c_course/stage5r/fighting_fx.png","./effects/c_course/stage5r/fire_fx.png","./effects/c_course/stage5r/flying_fx.png","./effects/c_course/stage5r/ghost_fx.png","./effects/c_course/stage5r/grass_fx.png","./effects/c_course/stage5r/ground_fx.png","./effects/c_course/stage5r/ice_fx.png","./effects/c_course/stage5r/normal_fx.png","./effects/c_course/stage5r/particles_atlas.png","./effects/c_course/stage5r/poison_fx.png","./effects/c_course/stage5r/psychic_fx.png","./effects/c_course/stage5r/rock_fx.png","./effects/c_course/stage5r/water_fx.png","./assets/three_monsters_v32/fire_attack.webp","./assets/three_monsters_v32/fire_defeat.webp","./assets/three_monsters_v32/fire_hurt.webp","./assets/three_monsters_v32/fire_idle.webp","./assets/three_monsters_v32/fire_portrait.png","./assets/three_monsters_v32/fire_victory.webp","./assets/three_monsters_v32/fire_walk.webp","./assets/three_monsters_v32/grass_attack.webp","./assets/three_monsters_v32/grass_defeat.webp","./assets/three_monsters_v32/grass_hurt.webp","./assets/three_monsters_v32/grass_idle.webp","./assets/three_monsters_v32/grass_portrait.png","./assets/three_monsters_v32/grass_victory.webp","./assets/three_monsters_v32/grass_walk.webp","./assets/three_monsters_v32/motion_manifest.json","./assets/three_monsters_v32/water_attack.webp","./assets/three_monsters_v32/water_defeat.webp","./assets/three_monsters_v32/water_hurt.webp","./assets/three_monsters_v32/water_idle.webp","./assets/three_monsters_v32/water_portrait.png","./assets/three_monsters_v32/water_victory.webp","./assets/three_monsters_v32/water_walk.webp"];
+const ASSETS = ["./audio/explore_v05/gong.mp3","./audio/explore_v05/level_up.mp3?v=012","./audio/win_loop.mp3","./audio/champion_loop.mp3","./audio/explore_v05/adventure_loop.mp3","./audio/explore_v05/encounter_loop.mp3","./assets/explore_v02/forest.webp","./assets/explore_v02/left.png","./assets/explore_v02/right.png","./","./index.html","./manifest.webmanifest","./icons/icon-180.png","./icons/icon-192.png","./icons/icon-512.png","./effects/c_course/stage5r/bug_fx.png","./effects/c_course/stage5r/dragon_fx.png","./effects/c_course/stage5r/electric_fx.png","./effects/c_course/stage5r/fighting_fx.png","./effects/c_course/stage5r/fire_fx.png","./effects/c_course/stage5r/flying_fx.png","./effects/c_course/stage5r/ghost_fx.png","./effects/c_course/stage5r/grass_fx.png","./effects/c_course/stage5r/ground_fx.png","./effects/c_course/stage5r/ice_fx.png","./effects/c_course/stage5r/normal_fx.png","./effects/c_course/stage5r/particles_atlas.png","./effects/c_course/stage5r/poison_fx.png","./effects/c_course/stage5r/psychic_fx.png","./effects/c_course/stage5r/rock_fx.png","./effects/c_course/stage5r/water_fx.png","./assets/three_monsters_v32/fire_attack.webp","./assets/three_monsters_v32/fire_defeat.webp","./assets/three_monsters_v32/fire_hurt.webp","./assets/three_monsters_v32/fire_idle.webp","./assets/three_monsters_v32/fire_portrait.png","./assets/three_monsters_v32/fire_victory.webp","./assets/three_monsters_v32/fire_walk.webp","./assets/three_monsters_v32/grass_attack.webp","./assets/three_monsters_v32/grass_defeat.webp","./assets/three_monsters_v32/grass_hurt.webp","./assets/three_monsters_v32/grass_idle.webp","./assets/three_monsters_v32/grass_portrait.png","./assets/three_monsters_v32/grass_victory.webp","./assets/three_monsters_v32/grass_walk.webp","./assets/three_monsters_v32/motion_manifest.json","./assets/three_monsters_v32/water_attack.webp","./assets/three_monsters_v32/water_defeat.webp","./assets/three_monsters_v32/water_hurt.webp","./assets/three_monsters_v32/water_idle.webp","./assets/three_monsters_v32/water_portrait.png","./assets/three_monsters_v32/water_victory.webp","./assets/three_monsters_v32/water_walk.webp"];
 const shell = new URL('./index.html', self.registration.scope).href;
 const root = new URL('./', self.registration.scope).href;
 self.addEventListener('install', event => {
@@ -13,7 +13,7 @@ self.addEventListener('install', event => {
     // A fresh shell is required. Optional assets must not prevent updating the game.
     const fresh = await fetch(shell, {cache: 'reload'});
     if (!fresh.ok) throw new Error('Could not refresh game shell');
-    if (!(await fresh.clone().text()).includes('id="explore-v09-music"')) throw new Error('Waiting for matching 0.9 game shell');
+    if (!(await fresh.clone().text()).includes('id="explore-v012-music"')) throw new Error('Waiting for matching 0.12 game shell');
     await cache.put(shell, fresh.clone());
     await cache.put(root, fresh);
     const optional=ASSETS.filter(a=>a!=='./'&&a!=='./index.html');
@@ -30,7 +30,7 @@ self.addEventListener('fetch', event => {
   const url = new URL(request.url);
   if (url.origin !== self.location.origin || !url.pathname.startsWith(new URL(root).pathname)) return;
   // MP3s are fetched as full buffers. Legacy optional tracks use network-first so a later upload replaces a stale file.
-  if (/\/audio\/(?:explore_v05\/)?(title|select|battle|final)\.mp3$/i.test(url.pathname)) {
+  if (/\/audio\/(?:explore_v05\/)?(title|select|battle|final|gong|level_up)\.mp3$/i.test(url.pathname)) {
     event.respondWith((async()=>{const cache=await caches.open(CACHE);try{const res=await fetch(request,{cache:'no-cache'});if(res.ok&&res.status===200)await cache.put(request,res.clone()).catch(()=>{});return res;}catch(err){return await cache.match(request)||Response.error();}})());return;
   }
   if (/\/audio\/(?:explore_v05\/(?:adventure|encounter)_loop|title|select|battle|final|win_loop|champion_loop)\.mp3$/i.test(url.pathname)) {
@@ -44,7 +44,7 @@ self.addEventListener('fetch', event => {
       try {
         const response = await fetch(request, {cache: 'no-store'});
         if (!response.ok) throw new Error('Shell network request failed');
-        if (response.status === 200 && (await response.clone().text()).includes('id="explore-v09-music"')) {
+        if (response.status === 200 && (await response.clone().text()).includes('id="explore-v012-music"')) {
           await cache.put(shell,response.clone()).catch(()=>{});
           await cache.put(root,response.clone()).catch(()=>{});
         }
