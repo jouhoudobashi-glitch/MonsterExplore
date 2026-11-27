@@ -1,5 +1,5 @@
 // MONSTER ARENA 7.2.32 - PWA offline shell cache.
-const CACHE = 'monster-explore-0.15-v1';
+const CACHE = 'monster-explore-0.17-v1';
 const PREFIX = 'monster-explore-';
 const VERSION = '7.2.32';
 const isMotion = u => /\/assets\/three_monsters_v32\/[^/]+\.webp$/.test(u.pathname);
@@ -13,7 +13,7 @@ self.addEventListener('install', event => {
     // A fresh shell is required. Optional assets must not prevent updating the game.
     const fresh = await fetch(shell, {cache: 'reload'});
     if (!fresh.ok) throw new Error('Could not refresh game shell');
-    if (!(await fresh.clone().text()).includes('id="explore-v015-online"')) throw new Error('Waiting for matching 0.15 game shell');
+    if (!(await fresh.clone().text()).includes('id="explore-v017-online"')) throw new Error('Waiting for matching 0.17 game shell');
     await cache.put(shell, fresh.clone());
     await cache.put(root, fresh);
     const optional=ASSETS.filter(a=>a!=='./'&&a!=='./index.html');
@@ -44,7 +44,7 @@ self.addEventListener('fetch', event => {
       try {
         const response = await fetch(request, {cache: 'no-store'});
         if (!response.ok) throw new Error('Shell network request failed');
-        if (response.status === 200 && (await response.clone().text()).includes('id="explore-v015-online"')) {
+        if (response.status === 200 && (await response.clone().text()).includes('id="explore-v017-online"')) {
           await cache.put(shell,response.clone()).catch(()=>{});
           await cache.put(root,response.clone()).catch(()=>{});
         }
