@@ -1,18 +1,15 @@
-# MONSTER EXPLORE Server Ver.0.16
+# MONSTER EXPLORE SERVER 0.17
 
-MONSTER EXPLORE Ver.0.15 の通信対戦ベータ専用サーバー。以前の接続試験ページ `/` と `/room/` も維持。ゲーム本体の GitHub Pages (`https://jouhoudobashi-glitch.github.io/MonsterExplore/`) から `/battle/` へ WebSocket で接続します。
+通信対戦の全画面版（ゲーム0.17、protocol 2）に対応。旧0.16/旧protocol 1とは通信対戦の互換性がありません。既存の接続試験 `/` と `/room/` はそのまま利用できます。
 
-## 更新手順
-既存の非公開 `monster-explore-server` リポジトリの main 直下に、ZIPを解凍した `index.js`、`battle.js`、`package.json`、`wrangler.jsonc`、`README.md` をまとめて上書き・追加し、Commit changes を押してください。ルートは `/`、Deploy command は `npx wrangler deploy` のまま。既存の Durable Object `ROOMS` と migration `v1` を変更していません。新規プロジェクトや課金プランは不要です。デプロイの成功と production URL を確認してください。
+## 更新
+既存の非公開 monster-explore-server リポジトリの main 直下に index.js、battle.js、package.json、wrangler.jsonc、README.md を上書き・追加してコミット。CloudflareのDeploymentsの成功を確認してください。既存の ROOMS、SQLite migration、公開URLは変更していません。
+https://monster-explore-server.floral-mountain-c1f7.workers.dev/health
+期待値: {"ok":true,"version":"0.17","mode":"friend-battle","protocol":2}
+その後、ゲーム本体 MonsterExplore の index.html と sw.js をVer.0.17に更新し、両端末で再読み込みしてください。
 
-正常時の確認先: https://monster-explore-server.floral-mountain-c1f7.workers.dev/health
-
-期待値: {"ok":true,"version":"0.16","mode":"friend-battle","protocol":1}
-
-次にゲーム本体のリポジトリに Ver.0.15 の `index.html` と `sw.js` を上書きします。音源や画像、育成記録は変更しません。2台でゲームを開き、通信対戦ボタンから6桁コードで接続し、横画面で両者が準備完了してください。
-
-## ベータ仕様
-- 仲間のモンスターIDだけを送信し、Lv.1相当の基礎能力で戦います。サーバーが移動・射程・発動・クールタイム・ダメージ・HP・勝敗を判定。4番目は相手に有効な対策技。障害物なしのコロシアム、120秒、時間切れはHP残存割合で決着（同率は引き分け）。入力は約12回/秒/人。両者の入力イベントでシミュレーションを進めます。永続的なタイマーは起動しません。
-- 特殊移動、補助技、SP技、既存の全モーション・ゴング演出、育成レベル反映は未搭載。戦闘は独立した簡易エンジンです。EXP・捕獲・育成記録・優勝記録への反映なし。切断・停止・再起動時は中断。再戦は新しい部屋を作る方式です。
-- 6桁コードは認証ではなく、ブラウザのOrigin制限も所有モンスターの真正性を保証しません。身内での試験に限定し、他人にコードを公開しないでください。公開ランク戦、サーバー保存、アカウント認証なし。GPS、セーブデータ全体は送信しません。
-- Workers無料枠の制限はアカウントの現行プランを確認してください。実機2台・Cloudflare本番通信は未検証。ローカルでの戦闘ロジック、2ブラウザ模擬通信（実際のWorker処理を模擬ランタイムで実行）を確認済み。
+## 仕様
+- Lv.1固定フェアバトル。通常戦のモンスター・技カタログ、通常技4枠、選択式補助技5種類、発動前硬直、クールタイム、移動倍率、相性、急所、ノックバック、近接接触技を参考にサーバーの対戦ルールを更新。CPU補正なし、制限時間180秒、同率なら引き分け。障害物なし・対称移動範囲。
+- 既存ゲームの描画関数を通信戦に流用。サーバーが位置・攻撃・HP・勝敗を管理するため描画や入力は同期用アダプター経由。演算・演出の完全一致ではない。SPはLv.1につき未習得、特殊移動（CPU向け）なし、育成レベル・EXP反映なし。
+- 6桁コード式、2人、切断時中断、GPSやセーブ本体は送信しない。コードは認証ではなく所有モンスターの真正性を保証する仕組みは未実装。家族や友人同士の試験向け。公開ランキングなし。
+- 実Cloudflare通信およびスマホ実機未試験。ローカルNode試験と2ブラウザの模擬Worker通信で動作検証。

@@ -211,68 +211,6 @@ const CATALOG = {
       "def": 105
     }
   ],
-  "types": [
-    {
-      "name": "ノーマル",
-      "color": "#c9c5b5"
-    },
-    {
-      "name": "炎",
-      "color": "#f2794d"
-    },
-    {
-      "name": "水",
-      "color": "#65baf4"
-    },
-    {
-      "name": "草",
-      "color": "#8bd55f"
-    },
-    {
-      "name": "電気",
-      "color": "#e9cf49"
-    },
-    {
-      "name": "氷",
-      "color": "#91e9f5"
-    },
-    {
-      "name": "格闘",
-      "color": "#db785d"
-    },
-    {
-      "name": "毒",
-      "color": "#bd7ad7"
-    },
-    {
-      "name": "地面",
-      "color": "#bb9666"
-    },
-    {
-      "name": "飛行",
-      "color": "#91c7ee"
-    },
-    {
-      "name": "エスパー",
-      "color": "#e990c9"
-    },
-    {
-      "name": "虫",
-      "color": "#a4c66b"
-    },
-    {
-      "name": "岩",
-      "color": "#b8a88a"
-    },
-    {
-      "name": "ゴースト",
-      "color": "#9c8be1"
-    },
-    {
-      "name": "ドラゴン",
-      "color": "#7885f3"
-    }
-  ],
   "TYPE_CHART": {
     "0": {
       "strong": [],
@@ -623,42 +561,50 @@ const CATALOG = {
     {
       "name": "ふみこみづき",
       "type": 0,
-      "power": 58,
-      "accuracy": 0.88,
-      "range": 430,
+      "power": 64,
+      "accuracy": 0.94,
+      "range": 94,
       "cd": 3.1,
-      "wind": 0.4,
-      "shape": "bolt"
+      "wind": 0.27,
+      "shape": "close",
+      "contact": "rush",
+      "travel": 0.23
     },
     {
       "name": "れんぞくつめ",
       "type": 0,
-      "power": 49,
-      "accuracy": 0.93,
-      "range": 205,
-      "cd": 4.1,
-      "wind": 0.55,
-      "shape": "cone"
+      "power": 57,
+      "accuracy": 0.95,
+      "range": 79,
+      "cd": 2.7,
+      "wind": 0.22,
+      "shape": "close",
+      "contact": "claw",
+      "travel": 0.3
     },
     {
       "name": "でんこうせっか",
       "type": 0,
-      "power": 67,
-      "accuracy": 0.9,
-      "range": 95,
-      "cd": 3.8,
-      "wind": 0.28,
-      "shape": "close"
+      "power": 74,
+      "accuracy": 0.93,
+      "range": 215,
+      "cd": 5,
+      "wind": 0.26,
+      "shape": "close",
+      "contact": "rush",
+      "travel": 0.28
     },
     {
       "name": "テイルスラップ",
       "type": 0,
-      "power": 34,
-      "accuracy": 1,
-      "range": 9999,
-      "cd": 7.4,
-      "wind": 0.68,
-      "shape": "homing"
+      "power": 61,
+      "accuracy": 0.93,
+      "range": 78,
+      "cd": 3.4,
+      "wind": 0.29,
+      "shape": "close",
+      "contact": "tail",
+      "travel": 0.27
     },
     {
       "name": "ひのこ",
@@ -863,42 +809,50 @@ const CATALOG = {
     {
       "name": "コンボジャブ",
       "type": 6,
-      "power": 58,
-      "accuracy": 0.88,
-      "range": 430,
-      "cd": 3.1,
-      "wind": 0.4,
-      "shape": "bolt"
+      "power": 77,
+      "accuracy": 0.93,
+      "range": 81,
+      "cd": 3.7,
+      "wind": 0.25,
+      "shape": "close",
+      "contact": "punch",
+      "travel": 0.32
     },
     {
       "name": "まわしげり",
       "type": 6,
-      "power": 49,
-      "accuracy": 0.93,
-      "range": 205,
-      "cd": 4.1,
-      "wind": 0.55,
-      "shape": "cone"
+      "power": 89,
+      "accuracy": 0.87,
+      "range": 86,
+      "cd": 4.8,
+      "wind": 0.35,
+      "shape": "close",
+      "contact": "kick",
+      "travel": 0.38
     },
     {
       "name": "ライブアッパー",
       "type": 6,
-      "power": 67,
-      "accuracy": 0.9,
-      "range": 95,
-      "cd": 3.8,
-      "wind": 0.28,
-      "shape": "close"
+      "power": 83,
+      "accuracy": 0.91,
+      "range": 84,
+      "cd": 4.5,
+      "wind": 0.3,
+      "shape": "close",
+      "contact": "uppercut",
+      "travel": 0.31
     },
     {
       "name": "だいしんげき",
       "type": 6,
-      "power": 34,
-      "accuracy": 1,
-      "range": 9999,
-      "cd": 7.4,
-      "wind": 0.68,
-      "shape": "homing"
+      "power": 75,
+      "accuracy": 0.94,
+      "range": 107,
+      "cd": 4.2,
+      "wind": 0.31,
+      "shape": "close",
+      "contact": "rush",
+      "travel": 0.29
     },
     {
       "name": "どくえき",
@@ -1222,35 +1176,35 @@ const CATALOG = {
     }
   ]
 };
-// Server-authoritative, fixed-level friend battle. No client HP, stats, or result accepted.
-export const W=1440,H=600, MATCH_MS=120000, PROTOCOL=1;
+// Shared catalog, timing, speed, damage and support rules from the Arena client.
+// Both human players are equal: no CPU handicaps. The server alone decides hits/HP.
+export const W=1440,H=600,MATCH_MS=180000,PROTOCOL=2;
 const {mons,skills,TYPE_CHART}=CATALOG;
-const clamp=(n,lo,hi)=>Math.max(lo,Math.min(hi,n));
-const validMonster=id=>Number.isInteger(id)&&id>=0&&id<mons.length;
-export {validMonster};
+const DUR={giant:7,armor:8,haste:6,shrink:7,dash:.25};
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v)), dist=(a,b)=>Math.hypot(a.x-b.x,a.y-b.y), aim=(a,b)=>Math.atan2(b.y-a.y,b.x-a.x);
+export const validMonster=id=>Number.isInteger(id)&&id>=0&&id<mons.length;
+export const validSupport=id=>Number.isInteger(id)&&id>=12&&id<=16;
 const mult=(a,d)=>TYPE_CHART[a].strong.includes(d)?2:TYPE_CHART[a].weak.includes(d)?.5:1;
-const norm=(x,y)=>{const d=Math.hypot(x,y);return d>1?[x/d,y/d]:[x,y];};
-const dist=(a,b)=>Math.hypot(a.x-b.x,a.y-b.y);
-const aim=(a,b)=>Math.atan2(b.y-a.y,b.x-a.x);
-function counter(id,enemy){const pool=skills.map((s,i)=>({s,i})).filter(({s,i})=>i>=17&&!s.support&&s.power>0);const strong=pool.filter(({s})=>mult(s.type,mons[enemy].type)===2);const pref={bolt:100,homing:82,cone:50,close:0};const rank=({s})=>(pref[s.shape]||0)+s.power*s.accuracy*.2+(s.range>=300?8:0);return (strong.length?strong:pool).sort((a,b)=>rank(b)-rank(a)||a.i-b.i)[0].i;}
-function fighter(id,enemy,slot,now){const m=mons[id];return {slot,id,x:slot===1?350:1090,y:320,hp:m.hp,max:m.hp,dir:slot===1?1:-1,moves:[...m.skills.slice(0,3),counter(id,enemy)],cd:[0,0,0,0],vx:0,vy:0,lastInput:now,cast:null,pose:'idle',hurtUntil:0};}
-export function createMatch(ids,now){if(ids.length!==2||!ids.every(validMonster))throw Error('Invalid selection');return {phase:'countdown',startAt:now+3000,last:now,endAt:now+3000+MATCH_MS,f:[fighter(ids[0],ids[1],1,now),fighter(ids[1],ids[0],2,now)],shots:[],fx:[],seq:0,winner:null,reason:null,shotSeq:0};}
-function fx(m,kind,p,skill,extra={}){m.fx.push({id:++m.seq,kind,x:p.x,y:p.y,slot:p.slot,skill,...extra,expires:m.last+700});if(m.fx.length>20)m.fx.shift();}
+const buff=p=>p.buff?.time>0?p.buff.kind:null, radius=p=>24*(buff(p)==='giant'?1.25:buff(p)==='shrink'?.65:1);
+const bounded=p=>{p.x=clamp(p.x,160,W-160);p.y=clamp(p.y,205,H-95);};
+function counter(id,e){if(mons[id].type===0)return 20;if(mons[id].type===6)return 44;const pool=skills.map((s,i)=>({s,i})).filter(({s,i})=>i>=17&&!s.support&&s.power>0),strong=pool.filter(({s})=>mult(s.type,mons[e].type)===2),pref={bolt:100,homing:82,cone:50,close:0},rank=({s})=>(pref[s.shape]||0)+s.power*s.accuracy*.2+(s.range>=300?8:0);return(strong.length?strong:pool).sort((a,b)=>rank(b)-rank(a)||a.i-b.i)[0].i;}
+function fighter(id,enemy,slot,now,support){const m=mons[id];return {slot,id,x:slot===1?465:975,y:270,hp:m.hp,max:m.hp,dir:slot===1?1:-1,moves:[...m.skills.slice(0,3),counter(id,enemy),validSupport(support)?support:12],cd:[0,0,0,0,0],vx:0,vy:0,lastInput:now,cast:null,pose:'idle',hurtUntil:0,lock:0,buff:null,queued:null};}
+export function createMatch(ids,now,supports=[12,12]){if(ids.length!==2||!ids.every(validMonster))throw Error('Invalid selection');return{phase:'countdown',startAt:now+3000,last:now,endAt:now+3000+MATCH_MS,f:[fighter(ids[0],ids[1],1,now,supports[0]),fighter(ids[1],ids[0],2,now,supports[1])],shots:[],fx:[],seq:0,winner:null,reason:null,shotSeq:0};}
+function fx(m,kind,p,skill,extra={}){m.fx.push({id:++m.seq,kind,x:p.x,y:p.y,slot:p.slot,skill,...extra,expires:m.last+850});if(m.fx.length>20)m.fx.shift();}
 function finish(m,winner,reason){if(m.phase==='ended')return;m.phase='ended';m.winner=winner;m.reason=reason;m.shots=[];for(const p of m.f){p.vx=p.vy=0;p.cast=null;}}
 export function interrupt(m,reason='disconnect'){if(m&&m.phase!=='ended')finish(m,null,reason);}
-function hit(m,p,e,s,idx){if(m.phase==='ended'||!p.hp||!e.hp)return;const rate=mult(s.type,mons[e.id].type),same=s.type===mons[p.id].type?1.2:1;
- if(Math.random()>s.accuracy){fx(m,'miss',e,idx);return;}
- const critical=Math.random()<.085;let dmg=Math.max(1,Math.floor(s.power*mons[p.id].atk/(mons[p.id].atk+mons[e.id].def)*rate*same));if(critical)dmg=Math.round(dmg*1.35);e.hp=Math.max(0,e.hp-dmg);e.hurtUntil=m.last+320;fx(m,'hit',e,idx,{dmg,rate,critical});if(!e.hp)finish(m,p.slot,'ko');}
-function launch(m,p,e,idx,angle){const s=skills[idx];fx(m,'cast',p,idx,{angle});if(s.shape==='close'||s.shape==='cone'){const d=dist(p,e),delta=Math.abs(Math.atan2(Math.sin(aim(p,e)-angle),Math.cos(aim(p,e)-angle)));if(d<=s.range+26&&(d<50||delta< (s.shape==='cone'?.65:1.05)))hit(m,p,e,s,idx);else fx(m,'miss',e,idx);return;}
- const speed=s.shape==='homing'?480:720,range=s.shape==='homing'?1800:Math.min(s.range,650);m.shots.push({id:++m.shotSeq,slot:p.slot,skill:idx,x:p.x,y:p.y,angle,speed,remaining:range});}
+function hit(m,p,e,s,idx){if(m.phase==='ended'||!p.hp||!e.hp)return;const rate=mult(s.type,mons[e.id].type),same=s.type===mons[p.id].type?1.2:1;if(buff(e)==='dash'||Math.random()>s.accuracy){fx(m,'miss',e,idx);return;}const critical=Math.random()<.085;let dmg=Math.max(1,Math.floor(s.power*mons[p.id].atk*(buff(p)==='giant'?1.35:buff(p)==='shrink'?.85:1)/(mons[p.id].atk+mons[e.id].def)*rate*same*(buff(e)==='armor'?.65:1)));if(critical)dmg=Math.max(1,Math.round(dmg*1.35));e.hp=Math.max(0,e.hp-dmg);e.hurtUntil=m.last+220;fx(m,'hit',e,idx,{dmg,rate,critical});if(!e.hp){finish(m,p.slot,'ko');return;}const a=aim(p,e),push=radius(e)*(s.shape==='close'?2:1);e.x+=Math.cos(a)*push;e.y+=Math.sin(a)*push;bounded(e);}
+function useSupport(m,p,e,idx){const s=skills[idx],kind=s.support;p.lock=kind==='dash'?.35:.7;if(kind==='dash'){const a=aim(e,p);p.x+=Math.cos(a)*120;p.y+=Math.sin(a)*120;bounded(p);}p.buff={kind,time:DUR[kind]};fx(m,'support',p,idx);}
+function launch(m,p,e,idx){const s=skills[idx];if(s.support){useSupport(m,p,e,idx);return;}const angle=aim(p,e),kind=s.shape;fx(m,'cast',p,idx,{angle});const vx=Math.cos(angle),vy=Math.sin(angle);m.shots.push({id:++m.shotSeq,slot:p.slot,skill:idx,x:p.x,y:p.y,angle,vx,vy,t:0,duration:kind==='homing'?2.4:kind==='bolt'?2.5:kind==='close'?(s.travel||.24):.4,remaining:kind==='bolt'?s.range+80:220});}
 function seg(x,y,a,b,p){const dx=a-x,dy=b-y,t=clamp(((p.x-x)*dx+(p.y-y)*dy)/(dx*dx+dy*dy||1),0,1);return Math.hypot(x+dx*t-p.x,y+dy*t-p.y);}
-function step(m,dt,now){m.last=now;if(m.phase==='ended')return;if(now<m.startAt)return;m.phase='battle';if(now>=m.endAt){const [a,b]=m.f.map(p=>p.hp/p.max);finish(m,a===b?0:a>b?1:2,'time');return;}
- for(const p of m.f){const e=m.f[2-p.slot];const fresh=now-p.lastInput<=350;const v=mons[p.id].speed*2.0*(p.cast?.left>0?.4:1);const vx=fresh?p.vx:0,vy=fresh?p.vy:0;p.x=clamp(p.x+vx*v*dt,40,W-40);p.y=clamp(p.y+vy*v*dt,125,H-35);p.dir=e.x>=p.x?1:-1;p.pose=p.hurtUntil>now?'hurt':p.cast?'attack':Math.hypot(vx,vy)>.05?'walk':'idle';p.cd=p.cd.map(c=>Math.max(0,c-dt));}
- // Symmetric separation (both players use the same authoritative coordinates).
- const [a,b]=m.f;let d=dist(a,b);if(d<48){const theta=d<.01?0:aim(a,b),delta=(48-d)/2;for(const [p,sign] of [[a,-1],[b,1]]){p.x=clamp(p.x+Math.cos(theta)*delta*sign,40,W-40);p.y=clamp(p.y+Math.sin(theta)*delta*sign,125,H-35);}}
- for(const p of m.f){if(m.phase==='ended')break;if(p.cast){p.cast.left-=dt;if(p.cast.left<=0){const c=p.cast;p.cast=null;launch(m,p,m.f[2-p.slot],c.idx,c.angle);}}}
- if(m.phase==='ended')return;const alive=[];for(const q of m.shots){const p=m.f[q.slot-1],e=m.f[2-q.slot];if(skills[q.skill].shape==='homing'){const a=aim(q,e);const delta=Math.atan2(Math.sin(a-q.angle),Math.cos(a-q.angle));q.angle+=clamp(delta,-dt*4.2,dt*4.2);}const dx=Math.cos(q.angle)*q.speed*dt,dy=Math.sin(q.angle)*q.speed*dt;const nx=q.x+dx,ny=q.y+dy;if(seg(q.x,q.y,nx,ny,e)<28){hit(m,p,e,skills[q.skill],q.skill);if(m.phase==='ended')break;continue;}q.x=nx;q.y=ny;q.remaining-=Math.hypot(dx,dy);if(q.remaining>0&&nx>=0&&nx<=W&&ny>=0&&ny<=H)alive.push(q);}if(m.phase!=='ended')m.shots=alive;}
-export function advance(m,now){if(!m||m.phase==='ended')return;if(now-m.last>2000){interrupt(m,'timeout');return;}while(m.last<now&&m.phase!=='ended'){const ms=Math.min(33,now-m.last);step(m,ms/1000,m.last+ms);}m.fx=m.fx.filter(e=>e.expires>now);}
-export function input(m,slot,msg,now){if(!m||!Number.isInteger(slot)||slot<1||slot>2)return;advance(m,now);const p=m.f[slot-1],e=m.f[2-slot];if(!p||m.phase!=='battle')return;const x=Number.isFinite(msg.x)?clamp(msg.x,-1,1):0,y=Number.isFinite(msg.y)?clamp(msg.y,-1,1):0;[p.vx,p.vy]=norm(x,y);p.lastInput=now;
- const k=msg.action;if(Number.isInteger(k)&&k>=0&&k<4&&!p.cast&&p.cd[k]<=0){const idx=p.moves[k],s=skills[idx];p.cd[k]=s.cd;p.cast={idx,left:s.wind,angle:aim(p,e)};p.pose='attack';fx(m,'wind',p,idx,{angle:p.cast.angle});}}
-export function snapshot(m,now){const round=n=>Math.round(n*10)/10;return {type:'battle',protocol:PROTOCOL,phase:m.phase,remaining:Math.max(0,Math.ceil((m.endAt-now)/1000)),countdown:Math.max(0,Math.ceil((m.startAt-now)/1000)),winner:m.winner,reason:m.reason,players:m.f.map(p=>({slot:p.slot,id:p.id,x:round(p.x),y:round(p.y),hp:p.hp,max:p.max,dir:p.dir,pose:p.hp?p.pose:'down',moves:p.moves,cd:p.cd.map(round),casting:!!p.cast})),shots:m.shots.map(s=>({id:s.id,slot:s.slot,skill:s.skill,x:round(s.x),y:round(s.y),angle:s.angle})),fx:m.fx.map(({expires,...e})=>e)};}
+function startCast(m,p,e,k){const idx=p.moves[k],s=skills[idx];p.cd[k]=s.cd;p.cast={idx,k,left:s.wind,wind:s.wind};p.lock=.45;p.pose='attack';p.dir=e.x>=p.x?1:-1;fx(m,'wind',p,idx,{angle:aim(p,e)});}
+function step(m,dt,now){m.last=now;if(m.phase==='ended'||now<m.startAt)return;m.phase='battle';if(now>=m.endAt){const[a,b]=m.f.map(p=>p.hp/p.max);finish(m,a===b?0:a>b?1:2,'time');return;}
+ for(const p of m.f){const e=m.f[2-p.slot];p.cd=p.cd.map(c=>Math.max(0,c-dt));p.lock=Math.max(0,p.lock-dt);if(p.buff){p.buff.time-=dt;if(p.buff.time<=0)p.buff=null;}if(p.queued&&!p.cast&&p.lock<=0){const q=p.queued;p.queued=null;if(q.until>=now&&p.cd[q.k]<=0)startCast(m,p,e,q.k);}if(p.cast){p.pose='attack';p.cast.left-=dt;if(p.cast.left<=0){const q=p.cast;p.cast=null;launch(m,p,e,q.idx);p.pose='idle';}continue;}const fresh=now-p.lastInput<=350,dx=fresh?p.vx:0,dy=fresh?p.vy:0,n=Math.hypot(dx,dy);const speed=mons[p.id].speed*1.55*(buff(p)==='haste'?1.4:buff(p)==='armor'?.7:1);if(n>.12){p.x+=dx/n*speed*dt;p.y+=dy/n*speed*dt;bounded(p);}p.dir=Math.abs(dx)>.1?Math.sign(dx):e.x>=p.x?1:-1;p.pose=p.hurtUntil>now?'hurt':n>.12?'walk':'idle';}
+ const [a,b]=m.f;const d=dist(a,b),r=radius(a)+radius(b);if(d<r){const theta=d<.01?0:aim(a,b),delta=(r-d)/2;for(const [p,sign] of [[a,-1],[b,1]]){p.x+=Math.cos(theta)*delta*sign;p.y+=Math.sin(theta)*delta*sign;bounded(p);}}
+ const alive=[];for(const q of m.shots){if(m.phase==='ended')break;const p=m.f[q.slot-1],e=m.f[2-q.slot],s=skills[q.skill];q.t+=dt;if(s.shape==='bolt'||s.shape==='homing'){if(s.shape==='homing'){const a=aim(q,e);q.vx=q.vx*.84+Math.cos(a)*.16;q.vy=q.vy*.84+Math.sin(a)*.16;const n=Math.hypot(q.vx,q.vy)||1;q.vx/=n;q.vy/=n;}q.angle=Math.atan2(q.vy,q.vx);const speed=s.shape==='homing'?330:500,step=speed*dt,nx=q.x+q.vx*step,ny=q.y+q.vy*step;if(seg(q.x,q.y,nx,ny,e)<radius(e)+11){hit(m,p,e,s,q.skill);continue;}q.x=nx;q.y=ny;q.remaining-=step;if(q.remaining<=0||q.t>q.duration){fx(m,'miss',q,q.skill,{slot:p.slot});continue;}}
+ else if(s.shape==='close'&&s.contact){const desired=s.contact==='rush'?48:65,d=dist(p,e),angle=aim(p,e),step=Math.min((s.contact==='rush'?950:360)*dt,Math.max(0,d-desired));p.x+=Math.cos(angle)*step;p.y+=Math.sin(angle)*step;bounded(p);p.dir=e.x>=p.x?1:-1;q.x=p.x;q.y=p.y;q.angle=angle;if(q.t>=q.duration){if(dist(p,e)<=desired+radius(e)+18)hit(m,p,e,s,q.skill);else fx(m,'miss',e,q.skill);continue;}}
+ else if(q.t>=q.duration){if(dist(p,e)<=s.range+radius(e))hit(m,p,e,s,q.skill);else fx(m,'miss',e,q.skill);continue;}else{q.x=p.x;q.y=p.y;q.angle=aim(p,e);}alive.push(q);}
+ if(m.phase!=='ended')m.shots=alive;}
+export function advance(m,now){if(!m||m.phase==='ended')return;if(now-m.last>2000){interrupt(m,'timeout');return;}while(m.last<now&&m.phase!=='ended'){const ms=Math.min(16,now-m.last);step(m,ms/1000,m.last+ms);}m.fx=m.fx.filter(e=>e.expires>now);}
+export function input(m,slot,msg,now){if(!m||![1,2].includes(slot))return;advance(m,now);const p=m.f[slot-1],e=m.f[2-slot];if(!p||m.phase!=='battle')return;p.vx=Number.isFinite(msg.x)?clamp(msg.x,-1,1):0;p.vy=Number.isFinite(msg.y)?clamp(msg.y,-1,1):0;p.lastInput=now;const k=msg.action;if(Number.isInteger(k)&&k>=0&&k<5&&p.cd[k]<=0){if(!p.cast&&p.lock<=0)startCast(m,p,e,k);else p.queued={k,until:now+1000};}}
+export function snapshot(m,now){const round=n=>Math.round(n*100)/100;return{type:'battle',protocol:PROTOCOL,phase:m.phase,remaining:Math.max(0,Math.ceil((m.endAt-now)/1000)),countdown:Math.max(0,Math.ceil((m.startAt-now)/1000)),winner:m.winner,reason:m.reason,players:m.f.map(p=>({slot:p.slot,id:p.id,x:round(p.x),y:round(p.y),hp:p.hp,max:p.max,dir:p.dir,pose:p.hp?p.pose:'down',moves:p.moves,cd:p.cd.map(round),casting:!!p.cast,cast:p.cast?{...p.cast,left:round(p.cast.left)}:null,buff:p.buff?{kind:p.buff.kind,time:round(p.buff.time)}:null})),shots:m.shots.map(s=>({id:s.id,slot:s.slot,skill:s.skill,x:round(s.x),y:round(s.y),angle:s.angle,t:round(s.t),duration:s.duration})),fx:m.fx.map(({expires,...e})=>e)};}

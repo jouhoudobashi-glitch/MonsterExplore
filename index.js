@@ -1,8 +1,8 @@
 import { DurableObject } from 'cloudflare:workers';
-import {createMatch, input, snapshot, interrupt, validMonster, PROTOCOL} from './battle.js';
+import {createMatch, input, snapshot, interrupt, validMonster, validSupport, PROTOCOL} from './battle.js';
 
-// Ver.0.16: original connection test + independent authoritative friend battle. No GPS or save-data handling.
-const VERSION = '0.16';
+// Ver.0.17: original connection test + independent authoritative friend battle. No GPS or save-data handling.
+const VERSION = '0.17';
 const GAME_ORIGIN = 'https://jouhoudobashi-glitch.github.io';
 const CODE = /^[1-9][0-9]{5}$/;
 const text = (body, status = 200) => new Response(body, {
@@ -57,7 +57,7 @@ export class BattleRoom extends DurableObject {
     const occupied = new Set(peers.map(s => s.deserializeAttachment()?.slot));
     const slot = occupied.has(1) ? 2 : 1;
     this.ctx.acceptWebSocket(server);
-    server.serializeAttachment({slot,code,kind:battle?'battle':'test',last:0,selected:null,ready:false,started:false});
+    server.serializeAttachment({slot,code,kind:battle?'battle':'test',last:0,selected:null,support:12,ready:false,started:false});
     this.send(server, {type:'welcome', slot, code, version:VERSION, protocol:battle?PROTOCOL:0});
     if(battle)this.lobby();else this.presence();
     return new Response(null, {status:101, webSocket:client});
@@ -82,11 +82,11 @@ export class BattleRoom extends DurableObject {
     if(data.started&&!this.match){this.broadcast({type:'interrupted',reason:'restart'});return;}
     if(msg.type==='ready'&&!data.started&&!this.match){
       if(typeof msg.ready!=='boolean'||(msg.ready&&!validMonster(msg.id)))return;
-      data.ready=msg.ready;data.selected=validMonster(msg.id)?msg.id:null;ws.serializeAttachment(data);this.lobby();
+      data.ready=msg.ready;data.support=validSupport(msg.support)?msg.support:12;data.selected=validMonster(msg.id)?msg.id:null;ws.serializeAttachment(data);this.lobby();
       const peers=this.active().sort((a,b)=>a.deserializeAttachment().slot-b.deserializeAttachment().slot);
       const selections=peers.map(w=>w.deserializeAttachment());
       if(peers.length===2&&selections.every(a=>a.ready&&validMonster(a.selected))){
-        this.match=createMatch(selections.map(a=>a.selected),now);this.lastBroadcast=now;
+        this.match=createMatch(selections.map(a=>a.selected),now,selections.map(a=>a.support));this.lastBroadcast=now;
         for(const w of peers){const a=w.deserializeAttachment();a.started=true;w.serializeAttachment(a);}
         this.broadcast(snapshot(this.match,now));
       }return;
